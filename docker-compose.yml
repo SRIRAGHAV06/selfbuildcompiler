@@ -1,0 +1,45 @@
+version: "3.8"
+
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.api
+    container_name: codeforge-api
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      - EXECUTION_TIMEOUT_SECONDS=5.0
+      - COMPILATION_TIMEOUT_SECONDS=10.0
+      - MAX_SOURCE_CODE_BYTES=65536
+      - MAX_STDIN_BYTES=32768
+      - MAX_OUTPUT_BYTES=524288
+      - MEMORY_LIMIT_MB=256
+      - MAX_PROCESSES=32
+      - MAX_CONCURRENT_JOBS=10
+      - RATE_LIMIT_PER_MINUTE=60
+      - DOCKER_ENABLED=false
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+    security_opt:
+      - no-new-privileges:true
+    read_only: false
+    tmpfs:
+      - /tmp:rw,noexec,nosuid,size=64m
+
+  frontend:
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
+    container_name: codeforge-ui
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - VITE_API_BASE_URL=http://localhost:8000
+    depends_on:
+      - backend

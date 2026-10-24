@@ -1,0 +1,6 @@
+{
+  "name": "CodeForge — Full-Stack Online Compiler",
+  "description": "Production-oriented online code compiler with isolated execution sandboxes for Python, C, C++, Java, and JavaScript.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
